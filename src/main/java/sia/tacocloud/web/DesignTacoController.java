@@ -46,6 +46,20 @@ public class DesignTacoController {
 
     @GetMapping
     public String showDesignForm(Model model) {
+        return renderDesignView(model);
+    }
+
+    @PostMapping
+    public String processDesign(@Valid Taco design, Errors errors, @ModelAttribute Order order, Model model) {
+        if (errors.hasErrors()) {
+            return renderDesignView(model);
+        }
+        Taco saved = designRepository.save(design);
+        order.addDesign(saved);
+        return "redirect:/orders/current";
+    }
+
+    private String renderDesignView(Model model) {
         List<Ingredient> ingredients = new ArrayList<Ingredient>();
         ingredientRepository.findAll().forEach(ingredient -> ingredients.add(ingredient));
         Type[] types = Type.values();
@@ -54,17 +68,6 @@ public class DesignTacoController {
         }
         model.addAttribute("design", new Taco());
         return "design";
-    }
-
-    @PostMapping
-    public String processDesign(@Valid Taco design, Errors errors, @ModelAttribute Order order) {
-        if (errors.hasErrors()) {
-            return "design";
-        }
-        log.info("Processing Design: " + design);
-        Taco saved = designRepository.save(design);
-        order.addDesign(saved);
-        return "redirect:/orders/current";
     }
 
     private List<Ingredient> filterByType(List<Ingredient> ingredients, Type type) {

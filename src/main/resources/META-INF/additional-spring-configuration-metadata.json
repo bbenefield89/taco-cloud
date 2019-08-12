@@ -1,0 +1,7 @@
+{
+  "properties": [{
+    "name": "tacos.orders.pageSize",
+    "type": "java.lang.String",
+    "description": "Sets the amount of orders to be shown on the ordersPage view."
+  }]
+}
